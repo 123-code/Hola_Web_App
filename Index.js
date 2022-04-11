@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+const config = require('../config');
 //const MONGO_URI = require(process.env.MONGO_URI);
 const PORT = process.env.PORT || 5000;
 
@@ -13,7 +14,7 @@ const Qschema = new mongoose.Schema({
 const DatabaseC = async ()=>{
 
   try{
-    const client = await mongoose.connect('mongodb://localhost:27017/Preguntas', { useNewUrlParser: true, useUnifiedTopology: true });
+    return mongoose.connect(config.mongo.uri, { useNewUrlParser: true, useUnifiedTopology: true });
    const Database = client.db('Preguntas');
     client.close();
    }catch(err){
