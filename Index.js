@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const config = require('../config');
+const url = "mongodb://localhost:27017/Foro";
 //const MONGO_URI = require(process.env.MONGO_URI);
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5008;
 
 const Qschema = new mongoose.Schema({
   Nombre: String,
@@ -14,9 +14,10 @@ const Qschema = new mongoose.Schema({
 const DatabaseC = async ()=>{
 
   try{
-    return mongoose.connect(config.mongo.uri, { useNewUrlParser: true, useUnifiedTopology: true });
-   const Database = client.db('Preguntas');
+    const Database = client.db(url);
     client.close();
+    return mongoose.connect(config.mongo.uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
    }catch(err){
      res.status(500).json({message:err});
     }}
@@ -72,6 +73,26 @@ app.get("api/nombre"),async(req,res)=>{
   })}
  
 }
+
+app.get('/',(req,res)=>{
+    res.send("Main Page");
+})
+
+app.get('/foro',(req,res)=>{
+    res.send("Foro");
+});
+
+app.get('/material',(req,res)=>{
+    res.send("material");
+});
+
+app.get('/nosotros',(req,res)=>{
+    res.send("nosotros");
+});
+
+app.get('/contacto',(req,res)=>{
+    res.send("contacto");
+});
 
 
 app.listen(PORT,()=>{
