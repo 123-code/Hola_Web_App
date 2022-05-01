@@ -2,42 +2,46 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const url = "mongodb://localhost:27017/Foro";
-//const MONGO_URI = require(process.env.MONGO_URI);
+const Pregunta = require('./Models/Pregunta');
+
+//const MONGO_URI = require(process.env.MONGO_URI); 
 const PORT = process.env.PORT || 5008;
 
-const Qschema = new mongoose.Schema({
-  Nombre: String,
-  Pregunta: String,
-});
 
 
+// falta hacer test con postman 
 const DatabaseC = async ()=>{
 
   try{
     const Database = client.db(url);
     client.close();
-    return mongoose.connect(config.mongo.uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    return mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
    }catch(err){
      res.status(500).json({message:err});
     }}
      
    
-app.post("api/pregunta"),async(req,res)=>{
-DatabaseC(async()=>{
+app.post("/api/spregunta"),async(req,res)=>{
+  res.send(' guardar pregunta');
+  let pregunta = new PreguntaSchema();
+  pregunta.Nombre = req.body.Nombre;
+  pregunta.Contenido = req.body.Contenido;
 
-  await Database.save(req.body).then(()=>{ 
-    res.status(200);
-  }).catch(err=>{
-    res.status(500).json({message:err});
+pregunta.save((data,err)=>{
+  if(err){
     console.info(err);
-  })
-
+  }
+  else{
+    console.info(`data saved${data}`);
+  }
 })
     
 }
 
-app.get('api/Pregunta'),async(req,res)=>{
+app.get('/api/Pregunta'),async(req,res)=>{
+  res.send(" buscar pregunta");
+
   DatabaseC = async ()=>{await Database.find((Pregunta,err)=>{
     if(!err){
       res.get(200).json(Pregunta);
@@ -45,32 +49,30 @@ app.get('api/Pregunta'),async(req,res)=>{
     else if(err){
       res.status(500);
     }
+    DatabaseC();
   })}
 
 }
 
-app.post("api/nombre"),async(req,res)=>{
-  DatabaseC = async ()=>{ await Database.save(req.body).then(()=>{
-    res.status(200);
 
-  }).catch(err=>{
-    res.status(500);
-    console.info(err);
-  })}
- 
+app.get("api/Nombre"),async(req,res)=>{
+  res.send(" buscar nombre");
+/*Getinfo=async(nombre,err)=>{
+  await Database.find(nombre)
 
-}
+}*/
 
-app.get("api/nombre"),async(req,res)=>{
   DatabaseC = async ()=>{
     
     await Database.find(nombre).then(()=>{
+    console.info(`${nombre}`);
     res.status*(200);
   }).catch(err=>{
     res.status(500);
     console.info(err);
 
   })}
+  DatabaseC();
  
 }
 
