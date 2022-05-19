@@ -3,12 +3,13 @@ const app = express();
 const mongoose = require("mongoose");
 const url = "mongodb://localhost:27017/Foro";
 const Pregunta = require('./Models/Pregunta');
+const bodyParser = require("body-parser");
  
 //const MONGO_URI = require(process.env.MONGO_URI); 
 const PORT = process.env.PORT || 5008;
 
-
-
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 // falta hacer test con postman 
 const DatabaseC = async (req,res)=>{
 
@@ -19,7 +20,7 @@ const DatabaseC = async (req,res)=>{
     await mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
     console.info("conectado");
    }catch(err){
-     res.status(500).json({message:err});
+     res.status(500);
      console.info('error');
     }}
      
@@ -35,7 +36,7 @@ pregunta.save((data,err)=>{
     console.info(err);
   }
   else{
-    console.info(`data saved${data}`);
+    console.info(`data saved`);
   }
   DatabaseC();
 })
