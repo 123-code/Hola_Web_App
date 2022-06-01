@@ -1,9 +1,11 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const url = "mongodb://localhost:27017/Foro";
+const url = "mongodb://127.0.0.1:27017/foro";
 const Pregunta = require('./Models/Pregunta');
 const bodyParser = require("body-parser");
+const router = express.Router();
+
  
 //const MONGO_URI = require(process.env.MONGO_URI); 
 const PORT = process.env.PORT || 5008;
@@ -14,94 +16,97 @@ app.use(bodyParser.json());
 const DatabaseC = async (req,res)=>{
 
   try{
-   
-    const Database = client.db(url);
     
-    await mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
-    console.info("conectado");
-   }catch(err){
-     res.status(500);
-     console.info('error');
-    }}
-     
+    
+    
+    const client = await mongoose.connect(url);
+    const db = client;
    
-app.post("/api/pregunta"),async(req,res)=>{
-  res.send(' guardar pregunta');
-  let pregunta = new PreguntaSchema();
-  pregunta.Nombre = req.body.Nombre;
-  pregunta.Contenido = req.body.Contenido;
+    console.info("conectado");
+   }catch(err){ 
+     
+     console.info('error');
+     console.error(err);
+    }}
+
+   
+// funciona con postman   
+app.post("/api/preguntap",async(req,res)=>{
+  
+  let pregunta = new Pregunta();
+  pregunta.Nombre = "Jose";
+  pregunta.Contenido = "Hola";
+/*
+req.params.Nombre;
+req.params.Contenido;
+*/
+
+
+  res.send('guardar pregunta');
+
 
 pregunta.save((data,err)=>{
   if(err){
     console.info(err);
+    console.log('error');
   }
   else{
+    console.log("data saved");
     console.info(`data saved`);
   }
   DatabaseC();
 })
-    
-}
+console.log(`Pregunta:${pregunta}`);  
+});
 
-app.get('/api/Pregunta'),async(req,res)=>{
-  res.send(" buscar pregunta");
 
-  DatabaseC = async ()=>{await Database.find((Pregunta,err)=>{
+
+
+app.get('/api/pregunta',async(req,res)=>{
+  
+
+  DatabaseC(async ()=>{await Database.find((Pregunta,err)=>{
     if(!err){
-      res.get(200).json(Pregunta);
+    res.get(200).json(Pregunta);
       console.info("Data found");
+      console.log(`Nombre:${Pregunta.Nombre} ,contenido:${Pregunta.Contenido}`);
     }
     else if(err){
       res.status(500);
       console.info("Data not found");
+      console.log("no se encontro");
     }
     DatabaseC();
+    res.send(" buscar pregunta");
+    console.log(`Pregunta:${pregunta}`);  
   })}
 
-}
+)})
 
 
-app.get("api/Nombre"),async(req,res)=>{
-  res.send(" buscar nombre");
-/*Getinfo=async(nombre,err)=>{
-  await Database.find(nombre)
+app.get("/api/nombre" ,async(req,res)=>{
+  DatabaseC(async()=>{await Database.find((Pregunta,err)=>{
+    if(err){
+      console.log("error");
+    }
+    else if(!err){
+      console.log("data found");
+      res.send(Pregunta);
+    }
+  })})
 
-}*/
+});
 
-  DatabaseC = async ()=>{
-    
-    await Database.find(nombre).then(()=>{
-    console.info(`${nombre}`);
-    res.status*(200);
-  }).catch(err=>{
-    res.status(500);
-    console.info(err);
 
-  })}
+
+app.get('/api/hola',async(req,res)=>{
+  res.send("ko");
   DatabaseC();
- 
-}
-
-app.get('/',(req,res)=>{
-    res.send("Main Page");
-    DatabaseC();
-})
-
-app.get('/foro',(req,res)=>{
-    res.send('l');
 });
 
-app.get('/material',(req,res)=>{
-    res.send("material");
-});
 
-app.get('/nosotros',(req,res)=>{
-    res.send("nosotros");
-});
 
-app.get('/contacto',(req,res)=>{
-    res.send("contacto");
-});
+
 
 
 app.listen(PORT,()=>{
